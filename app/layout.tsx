@@ -1,7 +1,6 @@
 import type React from "react"
 import type { Metadata } from "next/types"
 import { Inter } from "next/font/google"
-import { cookies } from "next/headers"
 import Image from "next/image"
 
 import { cn } from "@/lib/utils"
@@ -36,9 +35,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const cookieStore = cookies()
-  const defaultOpen = cookieStore.get("sidebar:state")?.value === "true"
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={cn("min-h-screen bg-background font-sans antialiased", inter.className)}>
