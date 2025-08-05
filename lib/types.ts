@@ -33,9 +33,16 @@ export interface CardTransaction {
   type: "Deposit" | "Withdrawal" // Deposit to card, Withdrawal from card
 }
 
+export interface AppSettings {
+  id: string
+  youtubePremiumCost: number
+  lastUpdated: string // ISO date string
+}
+
 export interface DataStore {
   members: Member[]
   transactions: Transaction[]
   cardDetail: CardDetail | null // Only one card detail for simplicity
   cardTransactions: CardTransaction[]
+  settings: AppSettings
 }

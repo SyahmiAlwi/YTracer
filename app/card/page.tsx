@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { AddEditCardTransactionDialog } from "@/components/add-edit-card-transaction-dialog"
 import { CardTransactionsTable } from "@/components/card-transactions-table"
 import { CardDetailsForm } from "@/components/card-details-form"
+import { SettingsDialog } from "@/components/settings-dialog"
 import { Skeleton } from "@/components/ui/skeleton"
 import type { CardTransaction } from "@/lib/types"
 import { CreditCard, Wallet } from "lucide-react"
@@ -16,6 +17,7 @@ export default function CardPage() {
     cardDetail,
     cardTransactions,
     transactions, // To calculate YouTube cost
+    settings,
     updateCardDetail,
     addCardTransaction,
     updateCardTransaction,
@@ -39,9 +41,8 @@ export default function CardPage() {
       return t.type === "Deposit" ? sum + t.amount : sum - t.amount
     }, 0)
 
-    // Find the YouTube Premium monthly subscription cost
-    const youtubeCostTxn = transactions.find((t) => t.description.includes("YouTube Premium") && t.type === "Outgoing")
-    const cost = youtubeCostTxn ? youtubeCostTxn.amount : 0
+    // Use the settings for YouTube Premium cost instead of hardcoded transaction
+    const cost = settings.youtubePremiumCost
 
     const needed = balance < cost ? cost - balance : 0
 
@@ -50,7 +51,7 @@ export default function CardPage() {
       youtubePremiumCost: cost,
       moneyNeeded: needed,
     }
-  }, [cardTransactions, transactions])
+  }, [cardTransactions, settings.youtubePremiumCost])
 
   // Show loading skeleton until hydration is complete
   if (!isHydrated) {
@@ -108,7 +109,10 @@ export default function CardPage() {
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
-      <h1 className="text-lg font-semibold md:text-2xl">Card Management</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-lg font-semibold md:text-2xl">Card Management</h1>
+        <SettingsDialog />
+      </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card className="group hover:shadow-lg hover:scale-[1.01] transition-all duration-300">

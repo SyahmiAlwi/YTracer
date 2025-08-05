@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useCallback, useEffect } from "react"
-import type { Member, Transaction, DataStore, CardDetail, CardTransaction } from "@/lib/types"
+import type { Member, Transaction, DataStore, CardDetail, CardTransaction, AppSettings } from "@/lib/types"
 
 const LOCAL_STORAGE_KEY = "ytracker-data"
 
@@ -122,6 +122,11 @@ const initialData: DataStore = {
       type: "Withdrawal",
     },
   ],
+  settings: {
+    id: "settings-1",
+    youtubePremiumCost: 18.99,
+    lastUpdated: getCurrentDate(),
+  },
 }
 
 export const useDataStore = () => {
@@ -219,11 +224,30 @@ export const useDataStore = () => {
     }))
   }, [])
 
+  const updateSettings = useCallback((updatedSettings: AppSettings) => {
+    setData((prev) => ({
+      ...prev,
+      settings: updatedSettings,
+    }))
+  }, [])
+
+  const updateYouTubePremiumCost = useCallback((newCost: number) => {
+    setData((prev) => ({
+      ...prev,
+      settings: {
+        ...prev.settings,
+        youtubePremiumCost: newCost,
+        lastUpdated: getCurrentDate(),
+      },
+    }))
+  }, [])
+
   return {
     members: data.members,
     transactions: data.transactions,
     cardDetail: data.cardDetail,
     cardTransactions: data.cardTransactions,
+    settings: data.settings,
     isHydrated,
     addMember,
     updateMember,
@@ -235,5 +259,7 @@ export const useDataStore = () => {
     addCardTransaction,
     updateCardTransaction,
     deleteCardTransaction,
+    updateSettings,
+    updateYouTubePremiumCost,
   }
 }

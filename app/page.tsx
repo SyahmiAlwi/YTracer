@@ -4,6 +4,7 @@ import { useMemo } from "react"
 import { useDataStore } from "@/hooks/use-data-store"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
+import { SettingsDialog } from "@/components/settings-dialog"
 import { Wallet, Users, TrendingUp, TrendingDown } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import Link from "next/link"
@@ -99,11 +100,14 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-1 flex-col gap-5 p-4 md:gap-6 md:p-6">
-      <div className="text-left">
-        <h1 className="text-2xl font-bold md:text-3xl text-gray-900 dark:text-white">
-          Dashboard
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-2 text-sm md:text-base">Track your YouTube Premium family payments</p>
+      <div className="flex items-center justify-between">
+        <div className="text-left">
+          <h1 className="text-2xl font-bold md:text-3xl text-gray-900 dark:text-white">
+            Dashboard
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-2 text-sm md:text-base">Track your YouTube Premium family payments</p>
+        </div>
+        <SettingsDialog />
       </div>
       <div className="grid gap-4 md:gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
