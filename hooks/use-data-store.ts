@@ -5,6 +5,18 @@ import type { Member, Transaction, DataStore, CardDetail, CardTransaction } from
 
 const LOCAL_STORAGE_KEY = "ytracker-data"
 
+// Helper function to get consistent dates
+const getCurrentDate = () => {
+  const now = new Date()
+  return now.toISOString().split("T")[0]
+}
+
+const getNextMonthDate = () => {
+  const now = new Date()
+  const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, now.getDate())
+  return nextMonth.toISOString().split("T")[0]
+}
+
 const initialData: DataStore = {
   members: [
     {
@@ -12,8 +24,8 @@ const initialData: DataStore = {
       name: "You (Owner)",
       paymentType: "Monthly",
       paymentStatus: "Paid",
-      lastPaymentDate: new Date().toISOString().split("T")[0],
-      nextDueDate: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString().split("T")[0],
+      lastPaymentDate: "2025-01-15", // Use static date instead of dynamic
+      nextDueDate: "2025-02-15", // Use static date instead of dynamic
       notes: "Your own contribution",
     },
     {
@@ -39,8 +51,8 @@ const initialData: DataStore = {
       name: "Charlie",
       paymentType: "Monthly",
       paymentStatus: "Paid",
-      lastPaymentDate: new Date().toISOString().split("T")[0],
-      nextDueDate: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString().split("T")[0],
+      lastPaymentDate: "2025-01-15", // Use static date instead of dynamic
+      nextDueDate: "2025-02-15", // Use static date instead of dynamic
       notes: "Cousin",
     },
     {
@@ -56,7 +68,7 @@ const initialData: DataStore = {
   transactions: [
     {
       id: "txn-1",
-      date: new Date().toISOString().split("T")[0],
+      date: "2025-01-15", // Use static date instead of dynamic
       amount: 18.99,
       memberId: null,
       description: "YouTube Premium Monthly Subscription Cost",
@@ -64,7 +76,7 @@ const initialData: DataStore = {
     },
     {
       id: "txn-2",
-      date: new Date().toISOString().split("T")[0],
+      date: "2025-01-15", // Use static date instead of dynamic
       amount: 3.79,
       memberId: "member-1",
       description: "Your contribution",
@@ -97,14 +109,14 @@ const initialData: DataStore = {
   cardTransactions: [
     {
       id: "card-txn-1",
-      date: new Date().toISOString().split("T")[0],
+      date: "2025-01-15", // Use static date instead of dynamic
       amount: 50.0,
       description: "Initial deposit",
       type: "Deposit",
     },
     {
       id: "card-txn-2",
-      date: new Date().toISOString().split("T")[0],
+      date: "2025-01-15", // Use static date instead of dynamic
       amount: 18.99,
       description: "YouTube Premium deduction",
       type: "Withdrawal",
@@ -113,19 +125,26 @@ const initialData: DataStore = {
 }
 
 export const useDataStore = () => {
-  const [data, setData] = useState<DataStore>(() => {
-    if (typeof window !== "undefined") {
-      const storedData = localStorage.getItem(LOCAL_STORAGE_KEY)
-      return storedData ? JSON.parse(storedData) : initialData
-    }
-    return initialData
-  })
+  const [data, setData] = useState<DataStore>(initialData)
+  const [isHydrated, setIsHydrated] = useState(false)
 
+  // Handle hydration
   useEffect(() => {
     if (typeof window !== "undefined") {
+      const storedData = localStorage.getItem(LOCAL_STORAGE_KEY)
+      if (storedData) {
+        setData(JSON.parse(storedData))
+      }
+      setIsHydrated(true)
+    }
+  }, [])
+
+  // Save to localStorage only after hydration
+  useEffect(() => {
+    if (isHydrated && typeof window !== "undefined") {
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data))
     }
-  }, [data])
+  }, [data, isHydrated])
 
   const addMember = useCallback((member: Omit<Member, "id">) => {
     setData((prev) => ({
@@ -205,6 +224,7 @@ export const useDataStore = () => {
     transactions: data.transactions,
     cardDetail: data.cardDetail,
     cardTransactions: data.cardTransactions,
+    isHydrated,
     addMember,
     updateMember,
     deleteMember,

@@ -3,6 +3,7 @@
 import { useMemo } from "react"
 import { useDataStore } from "@/hooks/use-data-store"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
 import { Wallet, Users, TrendingUp, TrendingDown } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import Link from "next/link"
@@ -11,7 +12,7 @@ import { Badge } from "@/components/ui/badge"
 import { format } from "date-fns"
 
 export default function DashboardPage() {
-  const { members, transactions } = useDataStore()
+  const { members, transactions, isHydrated } = useDataStore()
 
   const { totalIncome, totalOutgoing, netBalance, paidMembers, unpaidMembers, upcomingPayments } = useMemo(() => {
     const income = transactions.filter((t) => t.type === "Incoming").reduce((sum, t) => sum + t.amount, 0)
@@ -43,6 +44,58 @@ export default function DashboardPage() {
       upcomingPayments: upcoming,
     }
   }, [members, transactions])
+
+  // Show loading skeleton until hydration is complete
+  if (!isHydrated) {
+    return (
+      <div className="flex flex-1 flex-col gap-5 p-4 md:gap-6 md:p-6">
+        <div className="text-left">
+          <Skeleton className="h-8 w-32 mb-2" />
+          <Skeleton className="h-4 w-64" />
+        </div>
+        
+        <div className="grid gap-4 md:gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Card key={i} className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-4 w-4" />
+              </CardHeader>
+              <CardContent className="pt-0">
+                <Skeleton className="h-8 w-20 mb-2" />
+                <Skeleton className="h-3 w-32" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        <div className="grid gap-4 md:gap-6 lg:grid-cols-2">
+          <Card className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
+            <CardHeader className="pb-2">
+              <Skeleton className="h-6 w-40" />
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <Skeleton key={i} className="h-12 w-full" />
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
+            <CardHeader className="pb-2">
+              <Skeleton className="h-6 w-32" />
+            </CardHeader>
+            <CardContent className="grid gap-3">
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-12 w-full" />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-1 flex-col gap-5 p-4 md:gap-6 md:p-6">

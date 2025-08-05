@@ -6,10 +6,11 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { AddEditMemberDialog } from "@/components/add-edit-member-dialog"
 import { MembersTable } from "@/components/members-table"
+import { Skeleton } from "@/components/ui/skeleton"
 import type { Member } from "@/lib/types"
 
 export default function MembersPage() {
-  const { members, addMember, updateMember, deleteMember } = useDataStore()
+  const { members, addMember, updateMember, deleteMember, isHydrated } = useDataStore()
   const [isAddMemberDialogOpen, setIsAddMemberDialogOpen] = useState(false)
 
   const handleSaveMember = (member: Omit<Member, "id"> | Member) => {
@@ -18,6 +19,31 @@ export default function MembersPage() {
     } else {
       addMember(member)
     }
+  }
+
+  // Show loading skeleton until hydration is complete
+  if (!isHydrated) {
+    return (
+      <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
+        <div className="flex items-center">
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="ml-auto h-10 w-32" />
+        </div>
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-6 w-32" />
+            <Skeleton className="h-4 w-64" />
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Skeleton key={i} className="h-12 w-full" />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   return (

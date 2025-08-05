@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { AddEditCardTransactionDialog } from "@/components/add-edit-card-transaction-dialog"
 import { CardTransactionsTable } from "@/components/card-transactions-table"
 import { CardDetailsForm } from "@/components/card-details-form"
+import { Skeleton } from "@/components/ui/skeleton"
 import type { CardTransaction } from "@/lib/types"
 import { CreditCard, Wallet } from "lucide-react"
 
@@ -19,6 +20,7 @@ export default function CardPage() {
     addCardTransaction,
     updateCardTransaction,
     deleteCardTransaction,
+    isHydrated,
   } = useDataStore()
 
   const [isAddCardTransactionDialogOpen, setIsAddCardTransactionDialogOpen] = useState(false)
@@ -49,6 +51,60 @@ export default function CardPage() {
       moneyNeeded: needed,
     }
   }, [cardTransactions, transactions])
+
+  // Show loading skeleton until hydration is complete
+  if (!isHydrated) {
+    return (
+      <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
+        <Skeleton className="h-8 w-48" />
+        
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Card key={i}>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-4 w-4" />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-8 w-24 mb-2" />
+                <Skeleton className="h-3 w-40" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        <div className="grid gap-4 lg:grid-cols-2">
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-6 w-32" />
+              <Skeleton className="h-4 w-48" />
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <Skeleton key={i} className="h-10 w-full" />
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <Skeleton className="h-6 w-48" />
+              <Skeleton className="h-8 w-32" />
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Skeleton key={i} className="h-12 w-full" />
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
