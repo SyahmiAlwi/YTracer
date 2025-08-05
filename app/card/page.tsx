@@ -16,7 +16,6 @@ export default function CardPage() {
   const {
     cardDetail,
     cardTransactions,
-    transactions, // To calculate YouTube cost
     settings,
     updateCardDetail,
     addCardTransaction,
