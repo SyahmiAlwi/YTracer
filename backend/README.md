@@ -126,7 +126,7 @@ NODE_ENV=development
 
 # MongoDB Configuration
 MONGODB_URI=mongodb://localhost:27017/ytracer
-MONGODB_URI_PROD=mongodb+srv://username:password@cluster.mongodb.net/ytracer
+MONGODB_URI_PROD=mongodb+srv://<username>:<password>@cluster.mongodb.net/ytracer
 
 # CORS Configuration
 CORS_ORIGIN=http://localhost:3000
